@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Prediksi Obesitas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 50px auto;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 0;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .result-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #e9f7ef; /* Light green background */
+        }
+        .recommendation-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f7e9ef; /* Light pink background */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hasil Prediksi Status Obesitas</h1>
+
+        <div class="result-section">
+            <h2>Prediksi Anda:</h2>
+            <p><strong>{{ prediction_text }}</strong></p>
+        </div>
+
+        {% if recommendations %}
+        <div class="recommendation-section">
+            <h2>Rekomendasi Diet:</h2>
+            <ul>
+                {% for item in recommendations %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+        <p>Tidak ada rekomendasi diet yang tersedia.</p>
+        {% endif %}
+
+        <a href="/" class="back-link">Kembali ke Input Data</a>
+    </div>
+</body>
+</html>
