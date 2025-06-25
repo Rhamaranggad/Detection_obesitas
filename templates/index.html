@@ -3,35 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deteksi Risiko Obesitas</title>
+    <title>Deteksi Risiko Obesitas & Rekomendasi Diet</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f4f7f6;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .container {
-            max-width: 700px;
-            margin-top: 40px;
-            margin-bottom: 40px;
-        }
-        .card {
-            border: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .card-header {
-            background-color: #0d6efd;
-            color: white;
-            text-align: center;
-            font-size: 1.5rem;
-            padding: 1.2rem;
-        }
-        .form-label {
-            font-weight: 500;
-        }
-        .form-text {
-            font-size: 0.85rem;
-        }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container { max-width: 700px; margin-top: 40px; margin-bottom: 40px; }
+        .card { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .card-header { background-color: #0d6efd; color: white; text-align: center; font-size: 1.8rem; padding: 1.5rem; border-radius: 8px 8px 0 0; }
+        .form-label { font-weight: 600; margin-bottom: 0.5rem; }
+        .form-text { font-size: 0.85rem; color: #6c757d; margin-top: 0; margin-bottom: 1rem; }
+        hr { margin-top: 2rem; margin-bottom: 2rem; }
+        .btn-primary { background-color: #0d6efd; border-color: #0d6efd; }
+        .btn-primary:hover { background-color: #0b5ed7; border-color: #0b5ed7; }
     </style>
 </head>
 <body>
@@ -41,66 +24,89 @@
         <div class="card-header">
             Sistem Prediksi Risiko Obesitas
         </div>
-        <div class="card-body p-4">
+        <div class="card-body p-5">
             <form action="{{ url_for('predict') }}" method="post">
-                
-                <h5 class="mb-3">Data Diri</h5>
-                <div class="row g-3">
+
+                <h4 class="mb-4 text-center text-primary">Data Diri & Kebiasaan Utama</h4>
+                <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label for="age" class="form-label">Usia</label>
-                        <input type="number" class="form-control" name="age" placeholder="Contoh: 32" required>
+                        <input type="number" class="form-control" name="age" placeholder="Contoh: 30" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="weight" class="form-label">Berat Badan (kg)</label>
-                        <input type="number" step="any" class="form-control" name="weight" placeholder="Contoh: 70.5" required>
+                        <label for="gender" class="form-label">Jenis Kelamin</label>
+                        <select class="form-select" name="gender" required>
+                            {% for option in gender_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <div class="col-md-6">
                         <label for="height" class="form-label">Tinggi Badan (cm)</label>
-                        <input type="number" step="any" class="form-control" name="height" placeholder="Contoh: 168" required>
+                        <input type="number" step="any" class="form-control" name="height" placeholder="Contoh: 170.5" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="weight" class="form-label">Berat Badan (kg)</label>
+                        <input type="number" step="any" class="form-control" name="weight" placeholder="Contoh: 75.2" required>
+                    </div>
+                    <div class="col-12">
+                        <label for="activity_level" class="form-label">Tingkat Aktivitas Harian</label>
+                        <select class="form-select" name="activity_level" required>
+                            {% for option in activity_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Contoh: Sedentary (jarang gerak), Moderately Active (olahraga ringan 3-5x/minggu).</div>
                     </div>
                 </div>
 
-                <hr class="my-4">
-                <h5 class="mb-3">Detail Nutrisi Harian</h5>
-                <p class="form-text mb-3">Isi data berikut berdasarkan perkiraan asupan Anda pada hari kemarin. Data ini penting untuk akurasi prediksi.</p>
+                <hr>
+                <h4 class="mb-4 text-center text-primary">Estimasi Asupan Makanan</h4>
+                <p class="form-text mb-4">Pilih opsi yang paling mendekati kebiasaan Anda kemarin.</p>
 
-                <div class="row g-3">
-                     <div class="col-md-6">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label for="portion_size" class="form-label">Perkiraan Porsi Makan Utama (Sarapan, Makan Siang, Malam)</label>
+                        <select class="form-select" name="portion_size" required>
+                            {% for option in portion_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Pilih porsi rata-rata Anda (Kecil, Sedang, Besar).</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="sugar_frequency" class="form-label">Seberapa Sering Konsumsi Makanan/Minuman Manis (Gula)?</label>
+                        <select class="form-select" name="sugar_frequency" required>
+                            {% for option in sugar_freq_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Misal: Setiap Hari, Jarang.</div>
+                    </div>
+                    <div class="col-md-6">
                         <label for="daily_calorie_target" class="form-label">Target Kalori Harian (kcal)</label>
-                        <input type="number" step="any" class="form-control" name="daily_calorie_target" placeholder="Contoh: 2000" required>
+                        <input type="number" step="any" class="form-control" name="daily_calorie_target" placeholder="Contoh: 2000" value="2000" required>
+                        <div class="form-text">Perkiraan target kalori Anda.</div>
                     </div>
                      <div class="col-md-6">
-                        <label for="calories" class="form-label">Total Kalori Aktual (kcal)</label>
-                        <input type="number" step="any" class="form-control" name="calories" placeholder="Contoh: 1850" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="sugar" class="form-label">Gula (gram)</label>
-                        <input type="number" step="any" class="form-control" name="sugar" placeholder="Contoh: 25" required>
+                        <label for="calories_actual" class="form-label">Total Kalori Aktual Kemarin (kcal)</label>
+                        <input type="number" step="any" class="form-control" name="calories_actual" placeholder="Contoh: 1850" value="1850" required>
+                        <div class="form-text">Estimasi total kalori yang Anda konsumsi kemarin.</div>
                     </div>
                      <div class="col-md-6">
-                        <label for="breakfast_protein" class="form-label">Protein Sarapan (gram)</label>
-                        <input type="number" step="any" class="form-control" name="breakfast_protein" placeholder="Contoh: 20" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="breakfast_fats" class="form-label">Lemak Sarapan (gram)</label>
-                        <input type="number" step="any" class="form-control" name="breakfast_fats" placeholder="Contoh: 15" required>
+                        <label for="sodium" class="form-label">Perkiraan Asupan Sodium Kemarin (mg)</label>
+                        <input type="number" step="any" class="form-control" name="sodium" placeholder="Contoh: 2400" value="2400" required>
+                        <div class="form-text">Perkiraan total sodium dari makanan/minuman.</div>
                     </div>
                      <div class="col-md-6">
-                        <label for="lunch_calories" class="form-label">Kalori Makan Siang (kcal)</label>
-                        <input type="number" step="any" class="form-control" name="lunch_calories" placeholder="Contoh: 600" required>
-                    </div>
-                     <div class="col-md-6">
-                        <label for="lunch_protein" class="form-label">Protein Makan Siang (gram)</label>
-                        <input type="number" step="any" class="form-control" name="lunch_protein" placeholder="Contoh: 40" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="dinner_carbohydrates_1" class="form-label">Karbohidrat Makan Malam (gram)</label>
-                        <input type="number" step="any" class="form-control" name="dinner_carbohydrates_1" placeholder="Contoh: 70" required>
+                        <label for="fiber" class="form-label">Perkiraan Asupan Serat Kemarin (gram)</label>
+                        <input type="number" step="any" class="form-control" name="fiber" placeholder="Contoh: 25" value="25" required>
+                        <div class="form-text">Perkiraan total serat dari buah/sayur/gandum.</div>
                     </div>
                 </div>
 
                 <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg">Prediksi Status Gizi</button>
+                    <button type="submit" class="btn btn-primary btn-lg">Dapatkan Analisis & Rekomendasi</button>
                 </div>
             </form>
         </div>
