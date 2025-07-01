@@ -1,21 +1,22 @@
-# app.py: Aplikasi Flask untuk deteksi obesitas dan rekomendasi diet
+# app.py (potongan kode, fokus pada bagian pemuatan aset)
 
 import os
 import pandas as pd
 import numpy as np
 from flask import Flask, request, render_template
-import joblib
-import json
+import joblib # Untuk memuat model .pkl dan selected_features.pkl
+import json   # Untuk memuat file .json mapping (ini akan kita kurangi penggunaannya)
 
 app = Flask(__name__)
 
 # --- Muat Aset Model dan Data Pendukung ---
+# Pastikan file-file ini ada di direktori yang sama dengan app.py
 MODEL_FILENAME = 'best_rf_obesity_model.pkl'
 MEAL_SUGGESTION_CSV = 'meal_suggestions.csv'
 SELECTED_FEATURES_FILE = 'selected_features.pkl'
-OBESITY_MAPPING_FILE = 'obesity_mapping.json'
-GENDER_MAPPING_FILE = 'gender_mapping.json'
-ACTIVITY_MAP_FILE = 'activity_map.json'
+OBESITY_MAPPING_FILE = 'obesity_mapping.json' # Nama file tetap .json
+GENDER_MAPPING_FILE = 'gender_mapping.json'   # Nama file tetap .json
+ACTIVITY_MAP_FILE = 'activity_map.json'       # Nama file tetap .json
 
 loaded_model = None
 meal_suggestion_df = pd.DataFrame()
@@ -25,22 +26,56 @@ gender_mapping_loaded = {}
 activity_map_loaded = {}
 
 try:
+    # Memuat model Random Forest yang sudah dilatih (.pkl)
     loaded_model = joblib.load(MODEL_FILENAME)
+    print(f"DEBUG: Model '{MODEL_FILENAME}' berhasil dimuat.")
+
+    # Memuat data rekomendasi menu (.csv)
     meal_suggestion_df = pd.read_csv(MEAL_SUGGESTION_CSV)
-    selected_features = joblib.load(SELECTED_FEATURES_FILE) # Daftar 10 fitur terpilih
+    print(f"DEBUG: Data rekomendasi '{MEAL_SUGGESTION_CSV}' berhasil dimuat.")
 
-    with open(OBESITY_MAPPING_FILE, 'r') as f:
-        obesity_mapping_loaded = json.load(f)
+    # Memuat daftar fitur yang dipilih (.pkl)
+    selected_features = joblib.load(SELECTED_FEATURES_FILE)
+    print(f"DEBUG: Fitur terpilih '{SELECTED_FEATURES_FILE}' berhasil dimuat.")
+
+    # --- BAGIAN YANG DIBENAHI: Menggunakan joblib.load() untuk file .json yang sebenarnya .pkl ---
+    # Memuat mapping kategori obesitas (.json, tapi disimpan joblib)
+    # BARIS INI YANG DIBENAHI: Dulu pakai 'with open(...) as f: json.load(f)'
+    obesity_mapping_loaded = joblib.load(OBESITY_MAPPING_FILE)
     obesity_order = sorted(obesity_mapping_loaded, key=obesity_mapping_loaded.get) # Urutan kategori
+    print(f"DEBUG: Mapping obesitas '{OBESITY_MAPPING_FILE}' berhasil dimuat.")
 
+    # Memuat mapping gender (.json, tapi disimpan joblib)
+    # BARIS INI YANG DIBENAHI: Dulu pakai 'with open(...) as f: json.load(f)'
     gender_mapping_loaded = joblib.load(GENDER_MAPPING_FILE)
-    activity_map_loaded = joblib.load(ACTIVITY_MAP_FILE)
+    print(f"DEBUG: Mapping gender '{GENDER_MAPPING_FILE}' berhasil dimuat.")
 
-    print("Semua aset (model, data, mappings) berhasil dimuat.")
+    # Memuat mapping activity level (.json, tapi disimpan joblib)
+    # BARIS INI YANG DIBENAHI: Dulu pakai 'with open(...) as f: json.load(f)'
+    activity_map_loaded = joblib.load(ACTIVITY_MAP_FILE)
+    print(f"DEBUG: Mapping activity '{ACTIVITY_MAP_FILE}' berhasil dimuat.")
+    # --- AKHIR BAGIAN YANG DIBENAHI ---
+
+    print("\nSemua aset (model, data, mappings) berhasil dimuat.")
+
 except FileNotFoundError as e:
-    print(f"ERROR: File penting tidak ditemukan: {e}. Pastikan Anda sudah menjalankan train_model.py.")
+    print(f"\nERROR: File penting tidak ditemukan: {e}.")
+    print("Pastikan Anda sudah menjalankan train_model.py dan file-file aset berada di direktori yang sama dengan app.py.")
+    loaded_model = None
+    meal_suggestion_df = pd.DataFrame()
+    selected_features = []
+    obesity_order = ['Underweight', 'Normal', 'Overweight', 'Obese']
+    gender_mapping_loaded = {}
+    activity_map_loaded = {}
 except Exception as e:
-    print(f"ERROR: Terjadi kesalahan saat memuat aset: {e}")
+    print(f"\nERROR: Terjadi kesalahan lain saat memuat aset: {e}")
+    loaded_model = None
+    meal_suggestion_df = pd.DataFrame()
+    selected_features = []
+    obesity_order = ['Underweight', 'Normal', 'Overweight', 'Obese']
+    gender_mapping_loaded = {}
+    activity_map_loaded = {}
+
 
 
 # --- Mapping Kualitatif ke Numerik (SESUAIKAN INI DENGAN DATA ASLI & RISET GIZI ANDA!) ---
@@ -138,18 +173,19 @@ def predict():
             'Carbohydrates': carbohydrates_val, # Dari mapping porsi
             'Gender': gender_encoded, # Dari mapping
             'Activity Level': activity_encoded, # Dari mapping
-            'Fat': fat_val, # Dari mapping porsi
-            'Fiber': fiber, # Dari input form
+            'Fat': fat_val, # Dari mapping porsi (jika Fat masuk 10 fitur)
+            'Fiber': fiber, # Dari input form (jika Fiber masuk 10 fitur)
             # Fitur lain yang mungkin ada di selected_features tapi tidak ditanyakan/dihitung
             # Beri nilai default 0 atau rata-rata jika masuk 10 besar Anda
             # Contoh: 'Breakfast Calories': 0, 'Lunch Protein': 0, dll.
             # Anda HARUS menyesuaikan ini sesuai selected_features.pkl Anda
             # Jika ada Diet_... (OHE), sertakan juga
-            'Diet_Omnivore': 1, 'Diet_Pescatarian': 0, 'Diet_Vegan': 0, 'Diet_Vegetarian': 0,
+            'Diet_Omnivore': 1, 'Diet_Pescatarian': 0, 'Diet_Vegan': 0, 'Diet_Vegetarian': 0, # Contoh default jika tidak ada input
         }
 
         # Filter dan urutkan input_data_dict agar sesuai dengan selected_features
         # Ini langkah KRUSIAL! selected_features harus sama persis dari train_model.py
+        # Menggunakan .get(feature, 0) untuk memastikan tidak error jika ada fitur yang tidak diisi
         final_features_list = [all_possible_features_data.get(feature, 0) for feature in selected_features]
         final_features_array = np.array(final_features_list).reshape(1, -1)
 
