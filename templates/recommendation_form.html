@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriPredict - Cek Status Gizi</title>
+    <title>NutriPredict - Rekomendasi Diet Personal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -179,71 +179,65 @@
         <p>Sistem Prediksi Risiko Obesitas dengan Rekomendasi Diet Personalisasi</p>
     </header>
 
-    <!-- Feature Cards -->
-    <div class="row text-center mb-5">
-        <div class="col-md-4">
-            <div class="feature-card">
-                <span class="icon">🤖</span>
-                <h5>AI POWERED</h5>
-                <p class="text-muted">Menggunakan Random Forest untuk prediksi akurat</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="feature-card">
-                <span class="icon">🥗</span>
-                <h5>DIET PERSONAL</h5>
-                <p class="text-muted">Rekomendasi diet yang disesuaikan dengan kondisi dan preferensi Anda</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="feature-card">
-                <span class="icon">📊</span>
-                <h5>ANALISIS LENGKAP</h5>
-                <p class="text-muted">Analisis komprehensif risiko kesehatan dan nutrisi harian</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Form Input Data Pribadi -->
     <div class="card">
         <div class="card-header">
-            INPUT DATA PRIBADI
+            Estimasi Kebiasaan Makan Anda
         </div>
         <div class="card-body p-4">
-            <form action="{{ url_for('predict_bmi') }}" method="post">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="age" class="form-label">Usia (Tahun)</label>
-                        <input type="number" class="form-control" name="age" placeholder="Contoh: 30" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="gender" class="form-label">Jenis Kelamin</label>
-                        <select class="form-select" name="gender" required>
-                            {% for option in gender_options %}
-                                <option value="{{ option }}">{{ option }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="height" class="form-label">Tinggi Badan (cm)</label>
-                        <input type="number" step="any" class="form-control" name="height" placeholder="Contoh: 170.5" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="weight" class="form-label">Berat Badan (kg)</label>
-                        <input type="number" step="any" class="form-control" name="weight" placeholder="Contoh: 75.2" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="activity_level" class="form-label">Tingkat Aktivitas</label>
-                        <select class="form-select" name="activity_level" required>
-                            {% for option in activity_options %}
-                                <option value="{{ option }}">{{ option }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="form-text">Contoh: Sedentary (jarang gerak), Moderately Active (olahraga ringan 3-5x/minggu).</div>
-                    </div>
+            <form action="{{ url_for('show_recommendations') }}" method="post">
+                <p class="form-text mb-4">Pilih opsi yang paling mendekati kebiasaan Anda kemarin untuk mendapatkan rekomendasi diet personal.</p>
+
+                <!-- Kirim kembali data dasar sebagai hidden field -->
+                <input type="hidden" name="age" value="{{ age }}">
+                <input type="hidden" name="height" value="{{ height }}">
+                <input type="hidden" name="weight" value="{{ weight }}">
+                <input type="hidden" name="gender" value="{{ gender }}">
+                <input type="hidden" name="activity_level" value="{{ activity }}">
+
+                <div class="mb-3">
+                    <label for="portion_size" class="form-label">Perkiraan Porsi Makan Utama (Sarapan, Makan Siang, Malam)</label>
+                    <select class="form-select" name="portion_size" required>
+                        {% for option in portion_options %}
+                            <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-text">Pilih porsi rata-rata Anda (Kecil, Sedang, Besar).</div>
                 </div>
+                <div class="mb-3">
+                    <label for="sugar_frequency" class="form-label">Seberapa Sering Konsumsi Makanan/Minuman Manis (Gula)?</label>
+                    <select class="form-select" name="sugar_frequency" required>
+                        {% for option in sugar_freq_options %}
+                            <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-text">Misal: Setiap Hari, Jarang.</div>
+                </div>
+                <!-- Input tambahan jika diperlukan untuk 10 fitur Anda, tapi tetap sederhana -->
+                <!-- Contoh: Anda bisa tambahkan input untuk estimasi 'Daily Calorie Target' atau 'Calories Actual' -->
+                <div class="mb-3">
+                    <label for="daily_calorie_target" class="form-label">Target Kalori Harian (kcal)</label>
+                    <input type="number" step="any" class="form-control" name="daily_calorie_target" placeholder="Contoh: 2000" value="2000" required>
+                    <div class="form-text">Perkiraan target kalori yang Anda coba capai.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="calories_actual" class="form-label">Total Kalori Aktual Kemarin (kcal)</label>
+                    <input type="number" step="any" class="form-control" name="calories_actual" placeholder="Contoh: 1850" value="1850" required>
+                    <div class="form-text">Estimasi total kalori yang Anda konsumsi kemarin.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="sodium" class="form-label">Perkiraan Asupan Sodium Kemarin (mg)</label>
+                    <input type="number" step="any" class="form-control" name="sodium" placeholder="Contoh: 2400" value="2400" required>
+                    <div class="form-text">Perkiraan total sodium dari makanan/minuman.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="fiber" class="form-label">Perkiraan Asupan Serat Kemarin (gram)</label>
+                    <input type="number" step="any" class="form-control" name="fiber" placeholder="Contoh: 25" value="25" required>
+                    <div class="form-text">Perkiraan total serat dari buah/sayur/gandum.</div>
+                </div>
+
+
                 <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg">ANALISIS RISIKO & REKOMENDASI DIET</button>
+                    <button type="submit" class="btn btn-primary btn-lg">Dapatkan Rekomendasi</button>
                 </div>
             </form>
         </div>
