@@ -6,6 +6,7 @@ colorTo: purple # Pastikan ini salah satu warna yang diizinkan (red, yellow, gre
 sdk: static     # <--- INI YANG BENAR UNTUK FLASK DI HUGGING FACE SPACES!
 app_file: app.py
 python_version: 3.9 # Sesuaikan dengan versi Python Anda (misal 3.8, 3.10, 3.11)
+command: gunicorn --bind 0.0.0.0:7860 app:app
 ---
 
 # NutriPredict
