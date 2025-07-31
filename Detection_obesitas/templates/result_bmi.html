@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriPredict - Hasil Status Gizi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variabel CSS untuk konsistensi desain */
+        :root {
+            --primary-color: #6A5ACD; /* Biru-Ungu */
+            --accent-color: #FFA726; /* Oranye */
+            --text-dark: #333;
+            --text-medium: #555;
+            --text-light: #6c757d;
+            --bg-light: #f4f7f6;
+            --card-bg: #ffffff;
+            --border-radius-lg: 0.75rem; /* 12px */
+            --border-radius-md: 0.5rem; /* 8px */
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Gaya dasar body dan container */
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+        }
+        .container {
+            max-width: 960px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        /* Header Aplikasi */
+        .app-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 1.5rem;
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-md);
+        }
+        .app-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .app-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .app-header .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Kartu Fitur (tidak ada di halaman ini, tapi CSSnya konsisten) */
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 20px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .feature-card .icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+        }
+        .feature-card h5 {
+            font-weight: 600;
+            color: var(--text-medium);
+            font-size: 1.1rem;
+        }
+
+        /* Gaya umum untuk kartu */
+        .card {
+            border: none;
+            box-shadow: var(--shadow-md);
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 25px;
+        }
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            font-size: 1.5rem;
+            padding: 1.2rem;
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+            font-weight: 600;
+        }
+        .card-header.accent { /* Untuk header dengan warna aksen */
+            background-color: var(--accent-color);
+        }
+
+        /* Gaya Form (tidak ada di halaman ini, tapi CSSnya konsisten) */
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+        .form-control, .form-select {
+            border-radius: var(--border-radius-md);
+            border: 1px solid #ddd;
+            padding: 0.75rem 1rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(106, 90, 205, 0.25);
+        }
+        .form-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+        hr {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Gaya Tombol */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: var(--border-radius-md);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .btn-primary:hover {
+            background-color: #5A4AA0;
+            border-color: #5A4AA0;
+            transform: translateY(-2px);
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            border-radius: var(--border-radius-md);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: var(--text-light);
+            border-color: var(--text-light);
+            border-radius: var(--border-radius-md);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .btn-secondary:hover {
+            background-color: #5c636a;
+            border-color: #565e64;
+            transform: translateY(-2px);
+        }
+
+        /* Gaya Khusus Hasil BMI */
+        .result-section {
+            padding: 30px;
+            text-align: center;
+        }
+        .result-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .bmi-info-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .bmi-info-card .label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+        .bmi-info-card .value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .bmi-info-card.category .value { /* Gaya khusus untuk nilai kategori BMI */
+            font-size: 1.8rem;
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header Utama Aplikasi -->
+    <header class="app-header">
+        <span class="logo">🍎</span>
+        <h1>NutriPredict</h1>
+        <p>Sistem Prediksi Risiko Obesitas dengan Rekomendasi Diet Personalisasi</p>
+    </header>
+
+    <div class="card">
+        <div class="card-header accent"> <!-- Menggunakan warna aksen untuk header ini -->
+            INFORMASI BMI
+        </div>
+        <div class="card-body">
+            <div class="row g-3 p-3">
+                <div class="col-md-6">
+                    <div class="bmi-info-card">
+                        <div class="label">BMI Anda</div>
+                        <div class="value">{{ bmi_value }}</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bmi-info-card category">
+                        <div class="label">Kategori</div>
+                        <div class="value">{{ obesity_status }}</div>
+                    </div>
+                </div>
+                <!-- Tambahan Info dari Contoh Gambar -->
+                <div class="col-md-6">
+                    <div class="bmi-info-card">
+                        <div class="label">Berat Ideal (kg)</div>
+                        <!-- Pastikan variabel ini dikirim dari app.py -->
+                        <div class="value">{{ ideal_weight_range }}</div> 
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bmi-info-card">
+                        <div class="label">Kebutuhan Kalori (kcal)</div>
+                        <!-- Pastikan variabel ini dikirim dari app.py -->
+                        <div class="value">{{ total_daily_calorie_needs }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="text-center mb-4">
+                <p class="lead text-muted">BMI Anda menunjukkan <strong>{{ obesity_status }}</strong>. 
+                {% if obesity_status == 'Overweight' or obesity_status == 'Obese' %}
+                    Ikuti rekomendasi diet dan tingkatkan aktivitas fisik.
+                {% else %}
+                    Jaga pola hidup sehat Anda.
+                {% endif %}
+                </p>
+            </div>
+
+            <div class="d-grid gap-2 col-md-8 mx-auto">
+                <form action="{{ url_for('get_recommendations') }}" method="post">
+                    <!-- Kirim kembali data dasar sebagai hidden field -->
+                    <input type="hidden" name="age" value="{{ age }}">
+                    <input type="hidden" name="height" value="{{ height }}">
+                    <input type="hidden" name="weight" value="{{ weight }}">
+                    <input type="hidden" name="gender" value="{{ gender }}">
+                    <input type="hidden" name="activity_level" value="{{ activity }}">
+                    <button type="submit" class="btn btn-success btn-lg">Dapatkan Rekomendasi Diet Personal</button>
+                </form>
+                <a href="{{ url_for('home') }}" class="btn btn-secondary btn-lg">Cek Ulang</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
