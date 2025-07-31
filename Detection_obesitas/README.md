@@ -2,11 +2,10 @@
 title: NutriPredict - Deteksi Obesitas & Rekomendasi Diet Personal
 emoji: 🍎
 colorFrom: purple
-colorTo: purple # Pastikan ini salah satu warna yang diizinkan (red, yellow, green, blue, indigo, purple, pink, gray)
-sdk: static     # <--- INI YANG BENAR UNTUK FLASK DI HUGGING FACE SPACES!
-app_file: app.py
-python_version: 3.9 # Sesuaikan dengan versi Python Anda (misal 3.8, 3.10, 3.11)
-command: gunicorn --bind 0.0.0.0:7860 app:app
+colorTo: purple
+sdk: docker     # <--- INI YANG BENAR UNTUK FLASK!
+app_file: app.py # Memberitahu Hugging Face untuk menjalankan app.py
+python_version: 3.9 gunicorn --bind 0.0.0.0:7860 app:app
 ---
 
 # NutriPredict

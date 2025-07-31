@@ -280,6 +280,8 @@ def show_recommendations():
         return f"Terjadai kesalahan tidak terduga dalam prediksi rekomendasi: {e}"
 
 if __name__ == "__main__":
-    # Ambil port dari environment variable (untuk deployment) atau gunakan default 5000 (untuk lokal)
-    port = int(os.environ.get("PORT", 7860)) # <-- Ubah default ke 7860 untuk Hugging Face
-    app.run(host="0.0.0.0", port=port, debug=True) # <-- Pastikan host 0.0.0.0 dan port 7860
+    # Ini hanya akan berjalan jika Anda menjalankan app.py secara langsung (lokal)
+    # Saat deployment dengan Docker/Gunicorn, bagian ini diabaikan.
+    print("Running Flask app locally (debug mode). For deployment, Gunicorn handles execution.")
+    port = int(os.environ.get("PORT", 5000)) # Default lokal tetap 5000
+    app.run(host="0.0.0.0", port=port, debug=True)
