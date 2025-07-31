@@ -277,7 +277,6 @@ def show_recommendations():
                                total_daily_fat_estimated=total_daily_fat_estimated)
 
     except Exception as e:
-<<<<<<< HEAD
         return f"Terjadai kesalahan tidak terduga dalam prediksi rekomendasi: {e}"
 
 if __name__ == "__main__":
@@ -286,9 +285,3 @@ if __name__ == "__main__":
     print("Running Flask app locally (debug mode). For deployment, Gunicorn handles execution.")
     port = int(os.environ.get("PORT", 5000)) # Default lokal tetap 5000
     app.run(host="0.0.0.0", port=port, debug=True)
-=======
-        return f"Terjadi kesalahan tidak terduga dalam prediksi rekomendasi: {e}"
-
-if __name__ == "__main__":
-    app.run(debug=True)
->>>>>>> 46005ca1a439fd8c4fc2c74bb8acb5adea6637b7

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriPredict - Cek Status Gizi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6A5ACD; /* Biru-Ungu */
+            --accent-color: #FFA726; /* Oranye */
+            --text-dark: #333;
+            --text-medium: #555;
+            --text-light: #6c757d;
+            --bg-light: #f4f7f6;
+            --card-bg: #ffffff;
+            --border-radius-lg: 0.75rem; /* 12px */
+            --border-radius-md: 0.5rem; /* 8px */
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 960px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        /* Header Aplikasi */
+        .app-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 1.5rem;
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-md);
+        }
+        .app-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .app-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .app-header .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 20px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .feature-card .icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+        }
+        .feature-card h5 {
+            font-weight: 600;
+            color: var(--text-medium);
+            font-size: 1.1rem;
+        }
+
+        /* Card Umum */
+        .card {
+            border: none;
+            box-shadow: var(--shadow-md);
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 25px;
+        }
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            font-size: 1.5rem;
+            padding: 1.2rem;
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+            font-weight: 600;
+        }
+        .card-header.accent {
+            background-color: var(--accent-color);
+        }
+
+        /* Form Styling */
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+        .form-control, .form-select {
+            border-radius: var(--border-radius-md);
+            border: 1px solid #ddd;
+            padding: 0.75rem 1rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(106, 90, 205, 0.25);
+        }
+        .form-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+        hr {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: var(--border-radius-md);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .btn-primary:hover {
+            background-color: #5A4AA0;
+            border-color: #5A4AA0;
+            transform: translateY(-2px);
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            border-radius: var(--border-radius-md);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: var(--text-light);
+            border-color: var(--text-light);
+            border-radius: var(--border-radius-md);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .btn-secondary:hover {
+            background-color: #5c636a;
+            border-color: #565e64;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header Utama Aplikasi -->
+    <header class="app-header">
+        <span class="logo">🍎</span>
+        <h1>NutriPredict</h1>
+        <p>Sistem Prediksi Risiko Obesitas dengan Rekomendasi Diet Personalisasi</p>
+    </header>
+
+    <!-- Feature Cards -->
+    <div class="row text-center mb-5">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <span class="icon">🤖</span>
+                <h5>AI POWERED</h5>
+                <p class="text-muted">Menggunakan Random Forest untuk prediksi akurat</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <span class="icon">🥗</span>
+                <h5>DIET PERSONAL</h5>
+                <p class="text-muted">Rekomendasi diet yang disesuaikan dengan kondisi dan preferensi Anda</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <span class="icon">📊</span>
+                <h5>ANALISIS LENGKAP</h5>
+                <p class="text-muted">Analisis komprehensif risiko kesehatan dan nutrisi harian</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Input Data Pribadi -->
+    <div class="card">
+        <div class="card-header">
+            INPUT DATA PRIBADI
+        </div>
+        <div class="card-body p-4">
+            <form action="{{ url_for('predict_bmi') }}" method="post">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="age" class="form-label">Usia (Tahun)</label>
+                        <input type="number" class="form-control" name="age" placeholder="Contoh: 30" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="gender" class="form-label">Jenis Kelamin</label>
+                        <select class="form-select" name="gender" required>
+                            {% for option in gender_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="height" class="form-label">Tinggi Badan (cm)</label>
+                        <input type="number" step="any" class="form-control" name="height" placeholder="Contoh: 170.5" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="weight" class="form-label">Berat Badan (kg)</label>
+                        <input type="number" step="any" class="form-control" name="weight" placeholder="Contoh: 75.2" required>
+                    </div>
+                    <div class="col-12">
+                        <label for="activity_level" class="form-label">Tingkat Aktivitas</label>
+                        <select class="form-select" name="activity_level" required>
+                            {% for option in activity_options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Contoh: Sedentary (jarang gerak), Moderately Active (olahraga ringan 3-5x/minggu).</div>
+                    </div>
+                </div>
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">ANALISIS RISIKO & REKOMENDASI DIET</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

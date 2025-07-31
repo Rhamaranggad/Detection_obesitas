@@ -16,9 +16,5 @@ six==1.17.0
 threadpoolctl==3.6.0
 tzdata==2025.2
 Werkzeug==3.1.3
-<<<<<<< HEAD
-gunicorn==21.2.0
-=======
 gunicorn 
 
->>>>>>> 46005ca1a439fd8c4fc2c74bb8acb5adea6637b7
